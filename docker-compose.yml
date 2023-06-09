@@ -1,0 +1,39 @@
+version: "3.8"
+   
+services:
+  talkboxdb:
+    env_file: .env
+    image: bitnami/postgresql:13
+    volumes:
+      - talkboxdb:/var/lib/postgresql/data
+    container_name: talkboxdb
+    ports:
+      - 5432:5432
+  
+  talkboxaredis:
+    env_file: .env
+    image: bitnami/redis:6.2
+    container_name: talkboxaredis
+    restart: unless-stopped
+    volumes:
+      - talkboxaredis:/data
+    ports:
+      - 6379:6379
+
+  web:
+    build: .
+    command: ./docker-entrypoint.sh
+    restart: unless-stopped
+    volumes:
+      - .:/src
+    ports:
+      - 8000:8000
+    env_file: .env
+    depends_on:
+      - talkboxdb
+
+volumes:
+  talkboxaredis:
+    external: false
+  talkboxdb:
+    external: false
