@@ -1,9 +1,10 @@
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from user.serializers import UserSerializer
+from user.models import User
 
 
 class UserRegisterView(generics.CreateAPIView):
@@ -35,3 +36,14 @@ class LoginRegisterView(generics.CreateAPIView):
             return Response(
                 {"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
             )
+
+
+class UserList(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        current_user = self.request.user
+        queryset = User.objects.exclude(pk=current_user.pk)
+
+        return queryset
