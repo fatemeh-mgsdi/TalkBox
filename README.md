@@ -22,7 +22,7 @@ Dependencies:
   $ edit `.env.sample` and save as `.env`
   
   # run it
-  $ docker-compose up --build
+  $ docker-compose --env-file=.env up --build
   ```
 
   Once it's done building and everything has booted up:
